@@ -3,7 +3,9 @@ def menu():
     [1] Depositar
     [2] Sacar
     [3] Extrato
-    [4] Sair
+    [4] Criar Usuário
+    [5] Criar Conta
+    [6] Sair
     => """
     return input(f"Digite a opção desejada: \n {menu}")
  
@@ -40,17 +42,43 @@ def mostrar_extrato(saldo, /, *, extrato):
     print(extrato)
     print(f"Saldo Total: R$ {saldo:.2f}")
 
-#Criar usuário
+def criar_usuario(usuarios):
+    cpf = input("Informe seu CPF sem pontos: ")
+    usuario = validar_usuario(cpf, usuarios)
 
-#Criar conta
+    if usuario:
+        print("Usuário já cadastrado!")
+        return
+    
+    nome = input("Informe o nome completo: ")
+    data_nascimento = input("Informe a data de nascimento no formato dd-mm-aaaa: ")
+    endereco = input("Informe o endereço no formato logradouro, número - bairro - cidade/uf: ")
+
+    usuarios.append({"nome": nome,"data_nascimento": data_nascimento, "cpf": cpf, "endereco": endereco})
+    print("Usuário cadastrado com sucesso!")
+
+def validar_usuario(cpf, usuarios):
+    usuario_filtrado = [usuario for usuario in usuarios if usuario["cpf"] == cpf]
+    return usuario_filtrado[0] if usuario_filtrado else None
+
+def criar_conta(agencia, numero_conta, usuarios):
+    cpf = input("Informe seu CPF sem pontos: ")
+    usuario = validar_usuario(cpf, usuarios)
+
+    if usuario:
+        print("Conta criada com sucesso!")
+        return {"agencia": agencia, "numero_conta": numero_conta, "usuario":usuario}
+    
+    print("Usuário não encotrado, por favor cadastre o usuário antes de tentar novamente!")
 
 def main():
     saldo = 800.00
     limite_saque = 3
+    agencia = "0001"
     qtd_saques = 0
-    #deposito = 0
-    #saque = 0
     extrato = ""
+    usuarios = []
+    contas = []
 
     while True:
         opcao = menu()
@@ -71,8 +99,18 @@ def main():
     
         elif opcao == "3":
             mostrar_extrato(saldo, extrato = extrato)
-
+        
         elif opcao == "4":
+            criar_usuario(usuarios)
+        
+        elif opcao == "5":
+            numero_conta = len(contas) + 1
+            conta = criar_conta(agencia, numero_conta, usuarios)
+            
+            if conta:
+                contas.append(conta)
+
+        elif opcao == "6":
             print("Encerrando...")
             break
 
